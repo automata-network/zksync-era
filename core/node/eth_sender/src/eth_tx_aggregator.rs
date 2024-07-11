@@ -363,7 +363,9 @@ impl EthTxAggregator {
             .get_recursion_scheduler_level_vk_hash(verifier_address)
             .await
             .map_err(|err| {
-                tracing::error!("Failed to get VK hash from the Verifier {err:?}");
+                tracing::error!(
+                    "Failed to get VK hash from the Verifier {verifier_address:?} {err:?}"
+                );
                 err
             })?;
         let l1_verifier_config = L1VerifierConfig {

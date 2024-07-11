@@ -719,6 +719,43 @@ impl StorageLogsDal<'_, '_> {
         });
         Ok(rows.collect())
     }
+
+    pub async fn get_hashed_keys_for_initial_writes(
+        &mut self,
+        indices: &[u64],
+        l1_batch_number: L1BatchNumber,
+    ) -> DalResult<HashMap<u64, H256>> {
+        if indices.is_empty() {
+            return Ok(HashMap::new());
+        }
+        let indices: Vec<_> = indices.iter().map(|v| *v as i64).collect();
+
+        let rows = sqlx::query!(
+            r#"
+            SELECT
+                hashed_key,
+                INDEX
+            FROM
+                initial_writes
+            WHERE
+                INDEX = ANY ($1::BIGINT[])
+                AND l1_batch_number <= $2
+            "#,
+            &indices as &[i64],
+            i64::from(l1_batch_number.0),
+        )
+        .instrument("get_hashed_keys_for_initial_writes")
+        .with_arg("indices.len", &indices.len())
+        .with_arg("l1_batch_number", &l1_batch_number)
+        .report_latency()
+        .fetch_all(self.storage)
+        .await?;
+
+        Ok(rows
+            .into_iter()
+            .map(|row| (row.index as u64, H256::from_slice(&row.hashed_key)))
+            .collect())
+    }
 }
 
 #[cfg(test)]

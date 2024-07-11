@@ -517,8 +517,10 @@ impl GenericAsyncTree {
     pub async fn new(db: RocksDBWrapper, mode: MerkleTreeMode) -> anyhow::Result<Self> {
         tokio::task::spawn_blocking(move || {
             let Some(manifest) = db.manifest() else {
+                tracing::info!("async_tree::new with no manifest");
                 return Ok(Self::Empty { db, mode });
             };
+            tracing::info!("async_tree::new with manifest: {manifest:?}");
             anyhow::Ok(if let Some(version) = manifest.recovered_version() {
                 Self::Recovering(AsyncTreeRecovery::new(db, version, mode)?)
             } else {

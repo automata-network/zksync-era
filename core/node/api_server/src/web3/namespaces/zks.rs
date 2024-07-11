@@ -568,4 +568,19 @@ impl ZksNamespace {
             err.into()
         })
     }
+
+    #[tracing::instrument(skip(self))]
+    pub async fn get_hashed_keys_impl(
+        &self,
+        indices: Vec<u64>,
+        l1_batch_number: L1BatchNumber,
+    ) -> Result<HashMap<u64, H256>, Web3Error> {
+        let mut storage = self.state.acquire_connection().await?;
+        let hashed_keys = storage
+            .storage_logs_dal()
+            .get_hashed_keys_for_initial_writes(&indices, l1_batch_number)
+            .await
+            .map_err(DalError::generalize)?;
+        Ok(hashed_keys)
+    }
 }

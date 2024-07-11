@@ -131,4 +131,11 @@ pub trait ZksNamespace {
         &self,
         tx_bytes: Bytes,
     ) -> RpcResult<TransactionDetailedResult>;
+
+    #[method(name = "getHashedKeys")]
+    async fn get_hashed_keys(
+        &self,
+        indices: Vec<u64>,
+        l1_batch_number: L1BatchNumber,
+    ) -> RpcResult<HashMap<u64, H256>>;
 }

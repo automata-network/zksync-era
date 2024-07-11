@@ -762,6 +762,7 @@ impl FromStr for ComponentsToRun {
 async fn main() -> anyhow::Result<()> {
     // Initial setup.
     let opt = Cli::parse();
+    tracing::debug!("components: {:?}", opt.components);
 
     let mut config = ExternalNodeConfig::new().context("Failed to load node configuration")?;
     if !opt.enable_consensus {

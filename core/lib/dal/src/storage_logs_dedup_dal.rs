@@ -381,5 +381,15 @@ mod tests {
             .await
             .unwrap();
         assert_eq!(max_index, Some(4));
+
+        let idx2key = conn
+            .storage_logs_dal()
+            .get_hashed_keys_for_initial_writes(&[3, 4], L1BatchNumber(1))
+            .await
+            .unwrap();
+        let init3 = initial_writes[0].hashed_key();
+        let init4 = initial_writes[1].hashed_key();
+        assert_eq!(idx2key.get(&3), Some(&init3));
+        assert_eq!(idx2key.get(&4), Some(&init4));
     }
 }

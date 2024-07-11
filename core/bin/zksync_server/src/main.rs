@@ -90,6 +90,7 @@ impl FromStr for ComponentsToRun {
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     let opt = Cli::parse();
+    println!("opt: {opt:?}");
 
     // Load env config and use it if file config is not provided
     let tmp_config = load_env_config()?;
@@ -103,6 +104,7 @@ async fn main() -> anyhow::Result<()> {
                 .context("failed decoding general YAML config")?
         }
     };
+    println!("general_config: {configs:?}");
 
     let observability_config = configs
         .observability
@@ -157,6 +159,7 @@ async fn main() -> anyhow::Result<()> {
             l1: L1Secrets::from_env().ok(),
         },
     };
+    println!("secrets: {secrets:?}");
 
     let consensus = config::read_consensus_config().context("read_consensus_config()")?;
 

@@ -135,7 +135,14 @@ pub trait ZksNamespace {
     #[method(name = "getHashedKeys")]
     async fn get_hashed_keys(
         &self,
-        indices: Vec<u64>,
+        indexes: Vec<u64>,
         l1_batch_number: L1BatchNumber,
     ) -> RpcResult<HashMap<u64, H256>>;
+
+    #[method(name = "getEnumIndex")]
+    async fn get_enum_index(
+        &self,
+        hashed_key: H256,
+        l1_batch_number: L1BatchNumber,
+    ) -> RpcResult<Option<u64>>;
 }

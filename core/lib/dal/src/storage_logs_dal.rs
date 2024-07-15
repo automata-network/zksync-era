@@ -722,13 +722,13 @@ impl StorageLogsDal<'_, '_> {
 
     pub async fn get_hashed_keys_for_initial_writes(
         &mut self,
-        indices: &[u64],
+        indexes: &[u64],
         l1_batch_number: L1BatchNumber,
     ) -> DalResult<HashMap<u64, H256>> {
-        if indices.is_empty() {
+        if indexes.is_empty() {
             return Ok(HashMap::new());
         }
-        let indices: Vec<_> = indices.iter().map(|v| *v as i64).collect();
+        let indices: Vec<_> = indexes.iter().map(|v| *v as i64).collect();
 
         let rows = sqlx::query!(
             r#"

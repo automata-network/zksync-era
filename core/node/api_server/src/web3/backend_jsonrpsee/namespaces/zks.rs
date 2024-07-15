@@ -218,10 +218,20 @@ impl ZksNamespaceServer for ZksNamespace {
 
     async fn get_hashed_keys(
         &self,
-        indices: Vec<u64>,
+        indexes: Vec<u64>,
         l1_batch_number: L1BatchNumber,
     ) -> RpcResult<HashMap<u64, H256>> {
-        self.get_hashed_keys_impl(indices, l1_batch_number)
+        self.get_hashed_keys_impl(indexes, l1_batch_number)
+            .await
+            .map_err(|err| self.current_method().map_err(err))
+    }
+
+    async fn get_enum_index(
+        &self,
+        hashed_key: H256,
+        l1_batch_number: L1BatchNumber,
+    ) -> RpcResult<Option<u64>> {
+        self.get_enum_index_impl(hashed_key, l1_batch_number)
             .await
             .map_err(|err| self.current_method().map_err(err))
     }
